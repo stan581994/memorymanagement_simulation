@@ -49,7 +49,7 @@ public class Main {
                     }
                 }
             }
-            printMemoryDiagram(memory);
+            memory.printMemoryDiagram();
 
             // If a process has finished execution, deallocate its memory and bring a new
             // process from the job queue into memory
@@ -64,7 +64,7 @@ public class Main {
                     System.out.println("Job with Process ID: " + newProcess.getProcessId()
                             + " is brought into memory to replace the finished job.");
                 }
-                printMemoryDiagram(memory);
+                memory.printMemoryDiagram();
             }
 
             // Decrement the time in memory for each active process
@@ -108,19 +108,7 @@ public class Main {
         return null;
     }
 
-    static void printMemoryDiagram(Memory memory) {
-        System.out.println("Memory Diagram:");
-        System.out.println("Allocated Regions:");
-        for (ProcessControlBlock pcb : memory.getAllocatedRegions()) {
-            System.out.println("Process ID: " + pcb.getProcessId() + ", Size: " + pcb.getSize() + ", Base Register: "
-                    + pcb.getBaseRegister() + ", Limit Register: " + pcb.getLimitRegister());
-        }
-        System.out.println("Free Holes:");
-        for (Memory.Hole hole : memory.getFreeHoles()) {
-            System.out.println("Start: " + hole.getStart() + ", Size: " + hole.getSize());
-        }
-    }
-
+    
     static void printQueueContents(Queue<ProcessControlBlock> readyQueue, Queue<ProcessControlBlock> jobQueue) {
         System.out.println("Ready Queue:");
         for (ProcessControlBlock pcb : readyQueue) {
@@ -134,5 +122,7 @@ public class Main {
                     + pcb.getTimeInMemory());
         }
     }
+
+
 
 }

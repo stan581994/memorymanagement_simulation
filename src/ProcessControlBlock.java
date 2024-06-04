@@ -10,8 +10,8 @@ public class ProcessControlBlock {
         this.size = size;
         this.timeInMemory = timeInMemory;
         // Default values for baseRegister and limitRegister
-        this.baseRegister = 0;
-        this.limitRegister = 0;
+        this.baseRegister = -1;
+        this.limitRegister = -1;
     }
 
     // Getter methods

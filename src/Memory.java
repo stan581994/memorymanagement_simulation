@@ -33,6 +33,7 @@ public class Memory {
                 if (hole.getSize() == 0) {
                     freeHoles.remove(hole);
                 }
+                checkAndCompact();
 
                 return;
             }
@@ -48,6 +49,8 @@ public class Memory {
 
         // Add a new hole where the process was
         freeHoles.add(new Hole(pcb.getBaseRegister(), pcb.getSize()));
+
+        checkAndCompact();
     }
 
     public void compact() {
@@ -73,29 +76,10 @@ public class Memory {
         return freeHoles;
     }
 
-    public class Hole {
-        private int start;
-        private int size;
 
-        public Hole(int start, int size) {
-            this.start = start;
-            this.size = size;
-        }
-
-        public int getStart() {
-            return start;
-        }
-
-        public void setStart(int start) {
-            this.start = start;
-        }
-
-        public int getSize() {
-            return size;
-        }
-
-        public void setSize(int size) {
-            this.size = size;
+    public void checkAndCompact() {
+        if (getNumberOfHoles() > 3) {
+            compact();
         }
     }
 
@@ -111,5 +95,25 @@ public class Memory {
             }
         }
         return largestSize;
+    }
+
+    public void printMemoryDiagram() {
+        System.out.println("Memory contents:");
+    
+        for (ProcessControlBlock pcb : allocatedRegions) {
+            System.out.println("Process ID: " + pcb.getProcessId());
+            System.out.println("Size: " + pcb.getSize());
+            System.out.println("Time in memory: " + pcb.getTimeInMemory());
+            System.out.println("Base register: " + pcb.getBaseRegister());
+            System.out.println("Limit register: " + pcb.getLimitRegister());
+            System.out.println();
+        }
+    
+        for (Hole hole : freeHoles) {
+            System.out.println("Hole size: " + hole.getSize());
+            System.out.println("Start address: " + hole.getStart());
+            System.out.println("Limit address: " + (hole.getStart() + hole.getSize()));
+            System.out.println();
+        }
     }
 }
