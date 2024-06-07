@@ -5,9 +5,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Queue;
 
 public class MainFrame extends JFrame {
     private DefaultTableModel tableModel;
+    private JTextArea queuAreaTextArea;
+    private JTextArea memoryAreaTextArea;
 
     public MainFrame() {
         setSize(600, 600);
@@ -16,12 +19,40 @@ public class MainFrame extends JFrame {
 
         String[] columnNames = { "Type", "ID/Size", "Size/Start Address", "Time in memory", "Base register",
                 "Limit register" };
+
+        // table
         tableModel = new DefaultTableModel(columnNames, 0);
         JTable table = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(table);
-        getContentPane().add(scrollPane, BorderLayout.CENTER);
+        JScrollPane tableScrollPane = new JScrollPane(table);
+        getContentPane().add(tableScrollPane, BorderLayout.CENTER);
+
+        // Text Area
+        queuAreaTextArea = new JTextArea();
+        queuAreaTextArea.setEditable(false);
+        JScrollPane textAreaScrollPane = new JScrollPane(queuAreaTextArea);
+      
+
+        memoryAreaTextArea = new JTextArea();
+        memoryAreaTextArea.setEditable(false);
+        JScrollPane memoryAreaScrollPane = new JScrollPane(memoryAreaTextArea);
+       
+        // Create a new JPanel with a BoxLayout
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+
+        // Add the JScrollPane for the JTextArea and the JScrollPane for the JTable to
+        // the JPanel
+        centerPanel.add(textAreaScrollPane);
+        centerPanel.add(memoryAreaScrollPane);
+        centerPanel.add(tableScrollPane);
+
+
+        // Add the JPanel to the CENTER of the BorderLayout
+        getContentPane().add(centerPanel, BorderLayout.CENTER);
+
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
         JButton simulateButton = new JButton("Simulate");
         simulateButton.setPreferredSize(new Dimension(150, 100));
         simulateButton.addActionListener(new ActionListener() {
@@ -68,5 +99,36 @@ public class MainFrame extends JFrame {
 
         revalidate();
         repaint();
+    }
+
+    public void updateQueueContents(Queue<ProcessControlBlock> readyQueue, Queue<ProcessControlBlock> jobQueue) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Ready Queue:\n");
+        for (ProcessControlBlock pcb : readyQueue) {
+            sb.append("Process ID: ").append(pcb.getProcessId()).append(", Size: ").append(pcb.getSize())
+                    .append(", Time in Memory: ").append(pcb.getTimeInMemory()).append("\n");
+        }
+
+        sb.append("Job Queue:\n");
+        for (ProcessControlBlock pcb : jobQueue) {
+            sb.append("Process ID: ").append(pcb.getProcessId()).append(", Size: ").append(pcb.getSize())
+                    .append(", Time in Memory: ").append(pcb.getTimeInMemory()).append("\n");
+        }
+
+        queuAreaTextArea.setText(sb.toString());
+    }
+
+    public void updateMemoryAllocationAndDefragment(String processId, String operation) {
+        StringBuilder sb = new StringBuilder();
+        
+        if(operation.equals("allocate")) {
+            sb.append("Job with Process ID: ").append(processId).append(" is brought into memory to replace the finished job. Allocated memory..\n");
+        } else {
+            sb.append("Job with Process ID: ").append(processId).append(" has finished execution. deallocated memory..\n");
+        }
+
+      
+        memoryAreaTextArea.append(sb.toString());
     }
 }

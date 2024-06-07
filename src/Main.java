@@ -35,6 +35,7 @@ public class Main {
                     memory.allocate(process);
                     readyQueue.poll(); // Remove the process from the ready queue only if allocation is successful
                     activeProcesses.add(process); // Add the process to activeProcesses
+                    SwingUtilities.invokeLater(()->frame.updateQueueContents(readyQueue, jobQueue));
                     printQueueContents(readyQueue, jobQueue);
 
                 } catch (OutOfMemoryError e) {
@@ -80,11 +81,12 @@ public class Main {
             ProcessControlBlock finishedProcess = checkForFinishedProcesses(activeProcesses);
             if (finishedProcess != null) {
                 memory.deallocate(finishedProcess);
-                System.out
-                        .println("Job with Process ID: " + finishedProcess.getProcessId() + " has finished execution.");
+                SwingUtilities.invokeLater(()->frame.updateMemoryAllocationAndDefragment(String.valueOf(finishedProcess.getProcessId()), "deallocate"));
+                System.out.println("Job with Process ID: " + finishedProcess.getProcessId() + " has finished execution.");
                 if (!jobQueue.isEmpty()) {
                     ProcessControlBlock newProcess = jobQueue.poll();
                     memory.allocate(newProcess);
+                    SwingUtilities.invokeLater(()->frame.updateMemoryAllocationAndDefragment(String.valueOf(newProcess.getProcessId()), "allocate"));
                     System.out.println("Job with Process ID: " + newProcess.getProcessId()
                             + " is brought into memory to replace the finished job.");
                 }
