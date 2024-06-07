@@ -1,10 +1,10 @@
-import java.io.*;
-import java.util.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Memory {
+
     private int size;
     private List<ProcessControlBlock> allocatedRegions;
     private List<Hole> freeHoles;
@@ -98,22 +98,24 @@ public class Memory {
     }
 
     public void printMemoryDiagram() {
+        System.out.println("------------------------------------------------------------------------------------------------");
         System.out.println("Memory contents:");
-    
         for (ProcessControlBlock pcb : allocatedRegions) {
-            System.out.println("Process ID: " + pcb.getProcessId());
-            System.out.println("Size: " + pcb.getSize());
-            System.out.println("Time in memory: " + pcb.getTimeInMemory());
-            System.out.println("Base register: " + pcb.getBaseRegister());
-            System.out.println("Limit register: " + pcb.getLimitRegister());
+            System.out.println("Process ID: " + pcb.getProcessId() + " - ");
+            System.out.print("Size: " + pcb.getSize() + " - ");
+            System.out.print("Time in memory: " + pcb.getTimeInMemory() + " - ");
+            System.out.print("Base register: " + pcb.getBaseRegister() + " - ");
+            System.out.print("Limit register: " + pcb.getLimitRegister());
             System.out.println();
         }
     
         for (Hole hole : freeHoles) {
-            System.out.println("Hole size: " + hole.getSize());
-            System.out.println("Start address: " + hole.getStart());
-            System.out.println("Limit address: " + (hole.getStart() + hole.getSize()));
+            System.out.println("Hole size: " + hole.getSize() + " - ");
+            System.out.print("Start address: " + hole.getStart() + " - ");
+            System.out.print("Limit address: " + (hole.getStart() + hole.getSize())+ " - ");
             System.out.println();
         }
+
+        System.out.println("------------------------------------------------------------------------------------------------");
     }
 }

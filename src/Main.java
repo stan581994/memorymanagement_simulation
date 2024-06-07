@@ -8,9 +8,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class Main {
-    public static void main(String[] args) {
+import javax.swing.SwingUtilities;
 
+public class Main {
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            MainFrame frame = new MainFrame();
+            frame.setVisible(true);
+        });
+    }
+
+    public static void simulate(MainFrame frame) {
         // Initialize memory and queues
         Memory memory = new Memory(2048 - 512); // 2GB - 512MB for OS
         Queue<ProcessControlBlock> readyQueue = readQueueFromFile("src/queues/ready.txt");
@@ -19,7 +28,6 @@ public class Main {
         List<ProcessControlBlock> activeProcesses = new ArrayList<>();
 
         while (!readyQueue.isEmpty() || !activeProcesses.isEmpty()) {
-
             // If there is a process in the ready queue, try to allocate it to memory
             if (!readyQueue.isEmpty()) {
                 ProcessControlBlock process = readyQueue.peek();
@@ -28,28 +36,44 @@ public class Main {
                     readyQueue.poll(); // Remove the process from the ready queue only if allocation is successful
                     activeProcesses.add(process); // Add the process to activeProcesses
                     printQueueContents(readyQueue, jobQueue);
+
                 } catch (OutOfMemoryError e) {
                     // If memory allocation fails and there are more than 3 holes, compact the
                     // memory
                     if (memory.getNumberOfHoles() > 3) {
+                        System.out.println("Before compaction:");
+                        memory.printMemoryDiagram();
                         memory.compact();
-                        // Try to allocate the process again
-                        memory.allocate(process);
-                        readyQueue.poll(); // Remove the process from the ready queue only if allocation is successful
-                        activeProcesses.add(process); // Add the process to activeProcesses
-
-                    } else {
-                        // If the size of the process is larger than the size of the largest free hole,
-                        // move the process back to the job queue
-                        if (process.getSize() > memory.getLargestFreeHoleSize()) {
+                        System.out.println("After compaction:");
+                        memory.printMemoryDiagram();
+                        try {
+                            memory.allocate(process);
+                            readyQueue.poll(); // Remove the process from the ready queue only if allocation is
+                                               // successful
+                            activeProcesses.add(process); // Add the process to activeProcesses
+                        } catch (OutOfMemoryError e2) {
+                            // If allocation still fails after compaction, move the process back to the job
+                            // queue
                             jobQueue.add(readyQueue.poll());
-                        } else {
-                            throw e; // If there are 3 or fewer holes, rethrow the exception
                         }
+                    } else {
+                        // If there are 3 or fewer holes, move the process back to the job queue
+                        jobQueue.add(readyQueue.poll());
                     }
                 }
             }
             memory.printMemoryDiagram();
+
+            SwingUtilities.invokeLater(
+                    () -> frame.printMemoryDiagram(memory.getAllocatedRegions().toArray(new ProcessControlBlock[0]),
+                            memory.getFreeHoles().toArray(new Hole[0])));
+
+            // Add a small delay
+            try {
+                Thread.sleep(100); // Delay for 100 milliseconds
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             // If a process has finished execution, deallocate its memory and bring a new
             // process from the job queue into memory
@@ -64,14 +88,14 @@ public class Main {
                     System.out.println("Job with Process ID: " + newProcess.getProcessId()
                             + " is brought into memory to replace the finished job.");
                 }
-                memory.printMemoryDiagram();
+                // memory.printMemoryDiagram();
+
             }
 
             // Decrement the time in memory for each active process
             for (ProcessControlBlock process : activeProcesses) {
                 process.decrementTimeInMemory();
             }
-
         }
 
     }
@@ -108,7 +132,6 @@ public class Main {
         return null;
     }
 
-    
     static void printQueueContents(Queue<ProcessControlBlock> readyQueue, Queue<ProcessControlBlock> jobQueue) {
         System.out.println("Ready Queue:");
         for (ProcessControlBlock pcb : readyQueue) {
@@ -122,7 +145,5 @@ public class Main {
                     + pcb.getTimeInMemory());
         }
     }
-
-
 
 }
