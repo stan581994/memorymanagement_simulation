@@ -45,8 +45,8 @@ public class MainFrame extends JFrame {
         // Add the JScrollPane for the JTextArea and the JScrollPane for the JTable to
         // the JPanel
         centerPanel.add(textAreaScrollPane);
-        centerPanel.add(memoryAreaScrollPane);
         centerPanel.add(tableScrollPane);
+        centerPanel.add(memoryAreaScrollPane);
 
 
         // Add the JPanel to the CENTER of the BorderLayout
