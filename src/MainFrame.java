@@ -29,11 +29,13 @@ public class MainFrame extends JFrame {
         // Text Area
         queuAreaTextArea = new JTextArea();
         queuAreaTextArea.setEditable(false);
+        queuAreaTextArea.setRows(10);
         JScrollPane textAreaScrollPane = new JScrollPane(queuAreaTextArea);
       
 
         memoryAreaTextArea = new JTextArea();
         memoryAreaTextArea.setEditable(false);
+        memoryAreaTextArea.setRows(10);
         JScrollPane memoryAreaScrollPane = new JScrollPane(memoryAreaTextArea);
        
         // Create a new JPanel with a BoxLayout
