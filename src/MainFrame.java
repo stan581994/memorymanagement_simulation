@@ -20,6 +20,19 @@ public class MainFrame extends JFrame {
         String[] columnNames = { "Type", "ID/Size", "Size/Start Address", "Time in memory", "Base register",
                 "Limit register" };
 
+        // Queue title
+        JLabel queuelabel = new JLabel("Job Queueing Contents");
+        queuelabel.setFont(new Font("Arial", Font.BOLD, 16));
+        queuelabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // table title
+        JLabel tableTitle = new JLabel("Memory Diagram");
+        tableTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        tableTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // table title
+        JLabel statustitle = new JLabel("Status/History of the process");
+        statustitle.setFont(new Font("Arial", Font.BOLD, 16));
+        statustitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         // table
         tableModel = new DefaultTableModel(columnNames, 0);
         JTable table = new JTable(tableModel);
@@ -31,27 +44,27 @@ public class MainFrame extends JFrame {
         queuAreaTextArea.setEditable(false);
         queuAreaTextArea.setRows(10);
         JScrollPane textAreaScrollPane = new JScrollPane(queuAreaTextArea);
-      
 
         memoryAreaTextArea = new JTextArea();
         memoryAreaTextArea.setEditable(false);
         memoryAreaTextArea.setRows(10);
         JScrollPane memoryAreaScrollPane = new JScrollPane(memoryAreaTextArea);
-       
+
         // Create a new JPanel with a BoxLayout
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 
         // Add the JScrollPane for the JTextArea and the JScrollPane for the JTable to
         // the JPanel
+        centerPanel.add(queuelabel);
         centerPanel.add(textAreaScrollPane);
+        centerPanel.add(tableTitle);
         centerPanel.add(tableScrollPane);
+        centerPanel.add(statustitle);
         centerPanel.add(memoryAreaScrollPane);
-
 
         // Add the JPanel to the CENTER of the BorderLayout
         getContentPane().add(centerPanel, BorderLayout.CENTER);
-
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
@@ -123,14 +136,15 @@ public class MainFrame extends JFrame {
 
     public void updateMemoryAllocationAndDefragment(String processId, String operation) {
         StringBuilder sb = new StringBuilder();
-        
-        if(operation.equals("allocate")) {
-            sb.append("Job with Process ID: ").append(processId).append(" is brought into memory to replace the finished job. Allocated memory..\n");
+
+        if (operation.equals("allocate")) {
+            sb.append("Job with Process ID: ").append(processId)
+                    .append(" is brought into memory to replace the finished job. Allocated memory..\n");
         } else {
-            sb.append("Job with Process ID: ").append(processId).append(" has finished execution. deallocated memory..\n");
+            sb.append("Job with Process ID: ").append(processId)
+                    .append(" has finished execution. deallocated memory..\n");
         }
 
-      
         memoryAreaTextArea.append(sb.toString());
     }
 }

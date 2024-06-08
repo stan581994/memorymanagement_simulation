@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class Main {
@@ -24,6 +25,11 @@ public class Main {
         Memory memory = new Memory(2048 - 512); // 2GB - 512MB for OS
         Queue<ProcessControlBlock> readyQueue = readQueueFromFile("src/queues/ready.txt");
         Queue<ProcessControlBlock> jobQueue = readQueueFromFile("src/queues/job.txt");
+
+         if (readyQueue.isEmpty() || jobQueue.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Ready file or job file should not be empty!!", "Error", JOptionPane.ERROR_MESSAGE);
+                System.exit(1);
+            }
 
         List<ProcessControlBlock> activeProcesses = new ArrayList<>();
 
